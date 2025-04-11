@@ -1,8 +1,9 @@
 'use client';
 
-import { Menu, X, Linkedin, Instagram, Facebook, MoveDown } from 'lucide-react';
+import { Menu, X, Linkedin, Globe, Facebook, MoveDown } from 'lucide-react';
 import { useState } from 'react';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger,} from "@/components/ui/accordion"
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +26,49 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Full-screen Menu with Staggered Animation */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              className="fixed inset-0 bg-background flex flex-col items-center justify-center z-5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
+            >
+              <motion.ul 
+                className="text-text text-2xl p-12 pr-20 h-full flex flex-col justify-end items-end w-full gap-8"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={{ 
+                  visible: { transition: { staggerChildren: 0.2 } }, 
+                }}
+              >
+                {["ABOUT","EXPERIENCE", "PROJECTS", "GET IN TOUCH"].map((item, index) => (
+                  <motion.div
+                    className='w-full'
+                    key={index} 
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { 
+                        opacity: 1, 
+                        y: 0, 
+                        transition: { duration: 0.4, delay: index * 0.1 * (1 - index * 0.03) } 
+                      }
+                    }}>
+                    <div
+                      className='font-medium text-7xl text-left border-b-5 border-text pb-2'
+                      onClick={() => setIsOpen(false)} // Close menu when clicking a link
+                    >
+                      {item}
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className='text-8xl leading-[116px] py-8 border-b-[3px] border-text font-bold'>
           <span className='text-highlight'>PRODUCT DESIGNER</span><br/>PORTFOLIO // 2025
         </div>
@@ -38,7 +82,7 @@ export default function Home() {
 
         <div className='flex justify-end items-end h-full px-4 pb-4'>
           <div className='flex flex-row gap-4 self-end mx-4 mt-12'>
-            <div className='bg-text rounded-full p-3 w-fit'>
+            <div className='transition-all duration-200 ease-in-out hover:bg-highlight bg-text rounded-full p-4 w-fit'>
               <Linkedin
                 style={{ fill: '#121517' }} 
                 stroke="#121517" 
@@ -46,15 +90,8 @@ export default function Home() {
                 size={20}
               />
             </div>
-            <div className='bg-text rounded-full p-3 w-fit'>
-              <Instagram
-                style={{ fill: '#121517' }} 
-                stroke="#FEFFEA" 
-                strokeWidth={1.5}
-                size={20}
-              />
-            </div>
-            <div className='bg-text rounded-full p-3 w-fit'>
+
+            <div className='transition-all duration-200 ease-in-out hover:bg-highlight bg-text rounded-full p-4 w-fit'>
               <Facebook
                 style={{ fill: '#121517' }} 
                 stroke="#121517" 
@@ -70,7 +107,7 @@ export default function Home() {
           onClick={() => {
             // Optional scroll
             const yOffset = 200; // change based on layout
-            window.scrollTo({ top: yOffset, behavior: 'smooth' });
+            window.scrollBy({ top: yOffset, behavior: 'smooth' });
           }}
         >
           <div className="">
@@ -232,3 +269,4 @@ export default function Home() {
     </section>
   );
 }
+
